@@ -10,11 +10,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -125,6 +122,40 @@ fun GGIKalkuluaTestua(modifier: Modifier = Modifier) {
             label = { Text("Sexua (g edo e)") },
             placeholder = { Text("g / e") }
         )
+
+        val pisuaVal = pisua.toDoubleOrNull()
+        val altueraVal = altuera.toDoubleOrNull()
+        val adinaVal = adina.toDoubleOrNull()
+        val sexuaVal = if (sexua.lowercase().startsWith("g")) 1 else 0
+
+        val GMI: Double? =
+            if (pisuaVal != null && altueraVal != null && altueraVal > 0) {
+                pisuaVal / ((altueraVal / 100) * (altueraVal / 100))
+            } else null
+
+        val GGI: Double? =
+            if (GMI != null && adinaVal != null && sexua.isNotBlank()) {
+                (1.20 * GMI) + (0.23 * adinaVal) - (10.8 * sexuaVal) - 5.4
+            } else null
+
+        Spacer(modifier = modifier.height(16.dp))
+
+        Column(
+            modifier = Modifier
+                .padding(top = 8.dp),
+            horizontalAlignment = Alignment.Start,
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text(
+                text = "Kalkulatutako GMI: $GMI",
+                fontSize = 18.sp
+            )
+
+            Text(
+                text = "Gorputz Gantzaren Prozentjea: $GGI",
+                fontSize = 18.sp
+            )
+        }
 
     }
 }
