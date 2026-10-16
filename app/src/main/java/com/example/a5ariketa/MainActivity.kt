@@ -123,40 +123,47 @@ fun GGIKalkuluaTestua(modifier: Modifier = Modifier) {
             placeholder = { Text("g / e") }
         )
 
-        val pisuaVal = pisua.toDoubleOrNull()
-        val altueraVal = altuera.toDoubleOrNull()
-        val adinaVal = adina.toDoubleOrNull()
-        val sexuaVal = if (sexua.lowercase().startsWith("g")) 1 else 0
+        var GMIerantzuna = ""
+        var GGIerantzuna = ""
 
-        val GMI: Double? =
-            if (pisuaVal != null && altueraVal != null && altueraVal > 0) {
-                pisuaVal / ((altueraVal / 100) * (altueraVal / 100))
+        if (pisua.isNotEmpty() && altuera.isNotEmpty() && adina.isNotEmpty() && sexua.isNotEmpty()) {
+            val pisuaVal = pisua.replace(",", ".").toDoubleOrNull()
+            val altueraVal = altuera.replace(",", ".").toDoubleOrNull()
+            val adinaVal = adina.replace(",", ".").toDoubleOrNull()
+            val sexuaGarbia = sexua.trim().lowercase()
+
+            val sexuaVal: Double? = when (sexuaGarbia) {
+                "g" -> 1.0
+                "e" -> 0.0
+                else -> null
+            }
+
+            if (pisuaVal != null && altueraVal != null && altueraVal > 0 && sexuaVal != null && adinaVal != null) {
+                val GMI = pisuaVal / ((altueraVal / 100) * (altueraVal / 100))
+                val GGP = (1.20 * GMI) + (0.23 * adinaVal) - (10.8 * sexuaVal) - 5.4
+
+                val GMIBorobilduta = Math.round(GMI * 100.0) / 100.0
+                val GGPBorobilduta = Math.round(GGP * 100.0) / 100.0
+
+                GMIerantzuna = "$GMIBorobilduta"
+                GGIerantzuna = "$GGPBorobilduta"
+
             } else null
 
-        val GGI: Double? =
-            if (GMI != null && adinaVal != null && sexua.isNotBlank()) {
-                (1.20 * GMI) + (0.23 * adinaVal) - (10.8 * sexuaVal) - 5.4
-            } else null
+
+        }
 
         Spacer(modifier = modifier.height(16.dp))
 
-        Column(
-            modifier = Modifier
-                .padding(top = 8.dp),
-            horizontalAlignment = Alignment.Start,
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Text(
-                text = "Kalkulatutako GMI: $GMI",
-                fontSize = 18.sp
-            )
+        Text(
+            text = "Kalkulatutako GMI: $GMIerantzuna",
+            fontSize = 18.sp
+        )
 
-            Text(
-                text = "Gorputz Gantzaren Prozentjea: $GGI",
-                fontSize = 18.sp
-            )
-        }
-
+        Text(
+            text = "Gorputz Gantzaren Prozentjea: $GGIerantzuna",
+            fontSize = 18.sp
+        )
     }
 }
 
